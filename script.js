@@ -1,5 +1,8 @@
 const API = "http://localhost/escola-api/alunos";
 
+let alunosGlobal = [];
+
+// MODAL
 function abrirModal() {
   document.getElementById("modal").style.display = "block";
 }
@@ -8,39 +11,61 @@ function fecharModal() {
   document.getElementById("modal").style.display = "none";
 }
 
+// LISTAR
 async function listar() {
   try {
     const res = await fetch(API);
     const data = await res.json();
-    render(data.dados);
+
+    alunosGlobal = data.dados;
+    render(alunosGlobal);
+
   } catch {
-    // fallback se backend não estiver rodando
-    render([
-      { RA: 1, nome: "Aluno Teste", email: "teste@email.com", dataNascimento: "2000-01-01", turma: "2A" }
-    ]);
+    // fallback
+    alunosGlobal = [
+      { RA: 1, nome: "João", email: "joao@email.com", dataNascimento: "2000-01-01", turma: "1A" },
+      { RA: 2, nome: "Maria", email: "maria@email.com", dataNascimento: "2001-02-02", turma: "2A" }
+    ];
+
+    render(alunosGlobal);
   }
 }
 
+// RENDER
 function render(alunos) {
   const tabela = document.getElementById("tabela");
   tabela.innerHTML = "";
 
-  alunos.forEach(aluno => {
+  alunos.forEach(a => {
     tabela.innerHTML += `
       <tr>
-        <td>${aluno.RA}</td>
-        <td>${aluno.nome}</td>
-        <td>${aluno.email}</td>
-        <td>${aluno.dataNascimento}</td>
-        <td>${aluno.turma}</td>
+        <td>${a.RA}</td>
+        <td>${a.nome}</td>
+        <td>${a.email}</td>
+        <td>${a.dataNascimento}</td>
+        <td>${a.turma}</td>
         <td>
-          <button class="btn" onclick="deletar(${aluno.RA})">Excluir</button>
+          <button class="btn danger" onclick="deletar(${a.RA})">Excluir</button>
         </td>
       </tr>
     `;
   });
 }
 
+// FILTRO
+function filtrar() {
+  const turma = document.getElementById("filtroTurma").value;
+
+  if (turma === "todas") {
+    render(alunosGlobal);
+    return;
+  }
+
+  const filtrados = alunosGlobal.filter(a => a.turma === turma);
+  render(filtrados);
+}
+
+// SALVAR
 async function salvar() {
   const nome = document.getElementById("nome").value;
   const email = document.getElementById("email").value;
@@ -49,9 +74,7 @@ async function salvar() {
 
   await fetch(API, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nome,
       email,
@@ -64,12 +87,11 @@ async function salvar() {
   listar();
 }
 
+// DELETAR
 async function deletar(ra) {
-  await fetch(API + "/" + ra, {
-    method: "DELETE"
-  });
-
+  await fetch(API + "/" + ra, { method: "DELETE" });
   listar();
 }
 
+// INIT
 listar();
