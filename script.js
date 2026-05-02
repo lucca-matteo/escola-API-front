@@ -1,97 +1,150 @@
-const API = "http://localhost/escola-api/alunos";
-
-let alunosGlobal = [];
-
-// MODAL
-function abrirModal() {
-  document.getElementById("modal").style.display = "block";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-function fecharModal() {
-  document.getElementById("modal").style.display = "none";
+body {
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
-// LISTAR
-async function listar() {
-  try {
-    const res = await fetch(API);
-    const data = await res.json();
+header {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  padding: 25px;
+  text-align: center;
+}
 
-    alunosGlobal = data.dados;
-    render(alunosGlobal);
+.container {
+  padding: 30px;
+}
 
-  } catch {
-    // fallback
-    alunosGlobal = [
-      { RA: 1, nome: "João", email: "joao@email.com", dataNascimento: "2000-01-01", turma: "1A" },
-      { RA: 2, nome: "Maria", email: "maria@email.com", dataNascimento: "2001-02-02", turma: "2A" }
-    ];
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
 
-    render(alunosGlobal);
+/* BOTÕES */
+.btn {
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.primary:hover {
+  transform: scale(1.05);
+}
+
+.danger {
+  background: #ef4444;
+  color: white;
+}
+
+.danger:hover {
+  transform: scale(1.05);
+}
+
+/* SELECT */
+select, input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+/* TABELA */
+.table-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #1e293b;
+  color: white;
+  padding: 12px;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+tr {
+  transition: 0.2s;
+}
+
+tr:hover {
+  background: #f8fafc;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background: white;
+  width: 320px;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 10% auto;
+}
+
+/* ANIMAÇÃO */
+.animate {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-// RENDER
-function render(alunos) {
-  const tabela = document.getElementById("tabela");
-  tabela.innerHTML = "";
-
-  alunos.forEach(a => {
-    tabela.innerHTML += `
-      <tr>
-        <td>${a.RA}</td>
-        <td>${a.nome}</td>
-        <td>${a.email}</td>
-        <td>${a.dataNascimento}</td>
-        <td>${a.turma}</td>
-        <td>
-          <button class="btn danger" onclick="deletar(${a.RA})">Excluir</button>
-        </td>
-      </tr>
-    `;
-  });
+.actions {
+  display: flex;
+  justify-content: space-between;
 }
 
-// FILTRO
-function filtrar() {
-  const turma = document.getElementById("filtroTurma").value;
-
-  if (turma === "todas") {
-    render(alunosGlobal);
-    return;
-  }
-
-  const filtrados = alunosGlobal.filter(a => a.turma === turma);
-  render(filtrados);
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2563eb;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: 0.3s;
 }
-
-// SALVAR
-async function salvar() {
-  const nome = document.getElementById("nome").value;
-  const email = document.getElementById("email").value;
-  const data = document.getElementById("data").value;
-  const turma = document.getElementById("turma").value;
-
-  await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nome,
-      email,
-      dataNascimento: data,
-      turma
-    })
-  });
-
-  fecharModal();
-  listar();
-}
-
-// DELETAR
-async function deletar(ra) {
-  await fetch(API + "/" + ra, { method: "DELETE" });
-  listar();
-}
-
-// INIT
-listar();
