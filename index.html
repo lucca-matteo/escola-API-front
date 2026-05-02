@@ -10,7 +10,7 @@
 <body>
 
 <header>
-  <h1>Sistema Escolar</h1>
+  <h1>🎓 Sistema Escolar</h1>
   <p>Gerenciamento de Alunos</p>
 </header>
 
@@ -47,13 +47,19 @@
 
 <!-- MODAL -->
 <div id="modal" class="modal">
-  <div class="modal-content">
+  <div class="modal-content animate">
     <h2>Novo Aluno</h2>
 
     <input id="nome" placeholder="Nome">
     <input id="email" placeholder="Email">
     <input id="data" type="date">
-    <input id="turma" placeholder="Turma (ex: 1A)">
+
+    <select id="turma">
+      <option value="">Selecione a turma</option>
+      <option>1A</option>
+      <option>2A</option>
+      <option>3A</option>
+    </select>
 
     <div class="actions">
       <button class="btn primary" onclick="salvar()">Salvar</button>
@@ -61,6 +67,9 @@
     </div>
   </div>
 </div>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script src="script.js"></script>
 </body>
