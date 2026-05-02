@@ -33,7 +33,7 @@ header {
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 6px;
-  transition: 0.3s;
+  transition: 0.2s;
   font-weight: 500;
 }
 
@@ -43,7 +43,7 @@ header {
 }
 
 .primary:hover {
-  background: #1e40af;
+  transform: scale(1.05);
 }
 
 .danger {
@@ -52,14 +52,16 @@ header {
 }
 
 .danger:hover {
-  background: #b91c1c;
+  transform: scale(1.05);
 }
 
 /* SELECT */
-select {
+select, input {
   padding: 10px;
+  margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  width: 100%;
 }
 
 /* TABELA */
@@ -79,12 +81,15 @@ th {
   background: #1e293b;
   color: white;
   padding: 12px;
-  text-align: left;
 }
 
 td {
   padding: 12px;
   border-bottom: 1px solid #e2e8f0;
+}
+
+tr {
+  transition: 0.2s;
 }
 
 tr:hover {
@@ -110,15 +115,36 @@ tr:hover {
   margin: 10% auto;
 }
 
-.modal-content input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+/* ANIMAÇÃO */
+.animate {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .actions {
   display: flex;
   justify-content: space-between;
+}
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2563eb;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: 0.3s;
 }
