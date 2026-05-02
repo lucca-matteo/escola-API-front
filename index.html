@@ -4,73 +4,117 @@
 <meta charset="UTF-8">
 <title>Sistema Escolar</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f1f5f9;
+}
+
+header {
+  background: #1e3a8a;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  padding: 20px;
+}
+
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+input, select {
+  padding: 10px;
+  margin: 5px;
+  width: 200px;
+}
+
+button {
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+}
+
+th {
+  background: #1e293b;
+  color: white;
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+</style>
 </head>
 <body>
 
 <header>
-  <h1>🎓 Sistema Escolar</h1>
-  <p>Gerenciamento de Alunos</p>
+  <h1>Sistema Escolar</h1>
 </header>
 
 <div class="container">
 
-  <div class="top-bar">
-    <button class="btn primary" onclick="abrirModal()">+ Novo Aluno</button>
+<!-- FORM CADASTRO -->
+<form method="POST" action="/escola-api/alunos">
+  <input name="nome" placeholder="Nome" required>
+  <input name="email" placeholder="Email" required>
+  <input name="dataNascimento" type="date" required>
 
-    <select id="filtroTurma" onchange="filtrar()">
-      <option value="todas">Todas as Turmas</option>
-      <option value="1A">1A</option>
-      <option value="2A">2A</option>
-      <option value="3A">3A</option>
-    </select>
-  </div>
+  <select name="turma" required>
+    <option value="">Turma</option>
+    <option>1A</option>
+    <option>2A</option>
+    <option>3A</option>
+  </select>
 
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>RA</th>
-          <th>Nome</th>
-          <th>Email</th>
-          <th>Data</th>
-          <th>Turma</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="tabela"></tbody>
-    </table>
-  </div>
+  <button type="submit">Cadastrar</button>
+</form>
+
+<!-- TABELA -->
+<table>
+  <tr>
+    <th>RA</th>
+    <th>Nome</th>
+    <th>Email</th>
+    <th>Data</th>
+    <th>Turma</th>
+    <th>Ação</th>
+  </tr>
+
+  <?php foreach ($alunos as $a): ?>
+  <tr>
+    <td><?= $a["RA"] ?></td>
+    <td><?= $a["Nome"] ?></td>
+    <td><?= $a["Email"] ?></td>
+    <td><?= $a["Data de Nascimento"] ?></td>
+    <td><?= $a["Turma"] ?></td>
+    <td>
+      <form method="POST" action="/escola-api/alunos/<?= $a["RA"] ?>">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit">Excluir</button>
+      </form>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+
+</table>
 
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <div class="modal-content animate">
-    <h2>Novo Aluno</h2>
-
-    <input id="nome" placeholder="Nome">
-    <input id="email" placeholder="Email">
-    <input id="data" type="date">
-
-    <select id="turma">
-      <option value="">Selecione a turma</option>
-      <option>1A</option>
-      <option>2A</option>
-      <option>3A</option>
-    </select>
-
-    <div class="actions">
-      <button class="btn primary" onclick="salvar()">Salvar</button>
-      <button class="btn danger" onclick="fecharModal()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-<script src="script.js"></script>
 </body>
 </html>
