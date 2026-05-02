@@ -4,21 +4,28 @@
 <meta charset="UTF-8">
 <title>Sistema Escolar</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-  <h1>Sistema Escolar</h1>
+  <h1>🎓 Sistema Escolar</h1>
   <p>Gerenciamento de Alunos</p>
 </header>
 
 <div class="container">
 
-  <button class="btn primary" onclick="abrirModal()">+ Novo Aluno</button>
+  <div class="top-bar">
+    <button class="btn primary" onclick="abrirModal()">+ Novo Aluno</button>
+
+    <select id="filtroTurma" onchange="filtrar()">
+      <option value="todas">Todas as Turmas</option>
+      <option value="1A">1A</option>
+      <option value="2A">2A</option>
+      <option value="3A">3A</option>
+    </select>
+  </div>
 
   <div class="table-container">
     <table>
@@ -38,6 +45,7 @@
 
 </div>
 
+<!-- MODAL -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <h2>Novo Aluno</h2>
@@ -45,7 +53,7 @@
     <input id="nome" placeholder="Nome">
     <input id="email" placeholder="Email">
     <input id="data" type="date">
-    <input id="turma" placeholder="Turma">
+    <input id="turma" placeholder="Turma (ex: 1A)">
 
     <div class="actions">
       <button class="btn primary" onclick="salvar()">Salvar</button>
