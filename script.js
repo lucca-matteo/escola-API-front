@@ -1,121 +1,125 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+* {const API = "http://localhost/escola-api/alunos";
+
+let alunosGlobal = [];
+
+// TOAST
+function mostrarToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.style.opacity = 1;
+
+  setTimeout(() => {
+    toast.style.opacity = 0;
+  }, 2500);
 }
 
-body {
-  background: #f1f5f9;
-  color: #1e293b;
+// MODAL
+function abrirModal() {
+  document.getElementById("modal").style.display = "block";
 }
 
-header {
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
-  color: white;
-  padding: 25px;
-  text-align: center;
+function fecharModal() {
+  document.getElementById("modal").style.display = "none";
 }
 
-.container {
-  padding: 30px;
+// LISTAR
+async function listar() {
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    alunosGlobal = data.dados;
+    render(alunosGlobal);
+
+  } catch {
+    alunosGlobal = [
+      { RA: 1, nome: "João", email: "joao@email.com", dataNascimento: "2000-01-01", turma: "1A" }
+    ];
+    render(alunosGlobal);
+  }
 }
 
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+// RENDER
+function render(alunos) {
+  const tabela = document.getElementById("tabela");
+  tabela.innerHTML = "";
+
+  alunos.forEach(a => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${a.RA}</td>
+        <td>${a.nome}</td>
+        <td>${a.email}</td>
+        <td>${a.dataNascimento}</td>
+        <td>${a.turma}</td>
+        <td>
+          <button class="btn danger" onclick="deletar(${a.RA})">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
-/* BOTÕES */
-.btn {
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: 0.2s;
-  font-weight: 500;
+// FILTRO
+function filtrar() {
+  const turma = document.getElementById("filtroTurma").value;
+
+  if (turma === "todas") {
+    render(alunosGlobal);
+    return;
+  }
+
+  const filtrados = alunosGlobal.filter(a => a.turma === turma);
+  render(filtrados);
 }
 
-.primary {
-  background: #2563eb;
-  color: white;
+// VALIDAR EMAIL
+function emailValido(email) {
+  return email.includes("@") && email.includes(".");
 }
 
-.primary:hover {
-  transform: scale(1.05);
+// SALVAR
+async function salvar() {
+  const nome = document.getElementById("nome").value;
+  const email = document.getElementById("email").value;
+  const data = document.getElementById("data").value;
+  const turma = document.getElementById("turma").value;
+
+  if (!nome || !email || !data || !turma) {
+    mostrarToast("Preencha todos os campos!");
+    return;
+  }
+
+  if (!emailValido(email)) {
+    mostrarToast("Email inválido!");
+    return;
+  }
+
+  await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nome,
+      email,
+      dataNascimento: data,
+      turma
+    })
+  });
+
+  mostrarToast("Aluno cadastrado!");
+  fecharModal();
+  listar();
 }
 
-.danger {
-  background: #ef4444;
-  color: white;
+// DELETAR
+async function deletar(ra) {
+  await fetch(API + "/" + ra, { method: "DELETE" });
+  mostrarToast("Aluno removido!");
+  listar();
 }
 
-.danger:hover {
-  transform: scale(1.05);
-}
-
-/* SELECT */
-select, input {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-}
-
-/* TABELA */
-.table-container {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  background: #1e293b;
-  color: white;
-  padding: 12px;
-}
-
-td {
-  padding: 12px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-tr {
-  transition: 0.2s;
-}
-
-tr:hover {
-  background: #f8fafc;
-}
-
-/* MODAL */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-  background: white;
-  width: 320px;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 10% auto;
-}
-
-/* ANIMAÇÃO */
+// INIT
+listar();*/
 .animate {
   animation: slideUp 0.3s ease;
 }
