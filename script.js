@@ -1,16 +1,27 @@
-* {const API = "http://localhost/escola-api/alunos";
+const API = "http://localhost/escola-api/alunos";
 
 let alunosGlobal = [];
 
 // TOAST
-function mostrarToast(msg) {
+function mostrarToast(msg, cor = "#2563eb") {
   const toast = document.getElementById("toast");
   toast.innerText = msg;
+  toast.style.background = cor;
   toast.style.opacity = 1;
 
   setTimeout(() => {
     toast.style.opacity = 0;
   }, 2500);
+}
+
+// GERAR RA
+function gerarRA() {
+  const ano = new Date().getFullYear();
+  const base = 30; // código fixo
+
+  const numero = String(alunosGlobal.length + 1).padStart(3, "0");
+
+  return `${base}${ano}${numero}`;
 }
 
 // MODAL
@@ -32,9 +43,8 @@ async function listar() {
     render(alunosGlobal);
 
   } catch {
-    alunosGlobal = [
-      { RA: 1, nome: "João", email: "joao@email.com", dataNascimento: "2000-01-01", turma: "1A" }
-    ];
+    // fallback mais limpo
+    alunosGlobal = [];
     render(alunosGlobal);
   }
 }
@@ -43,6 +53,11 @@ async function listar() {
 function render(alunos) {
   const tabela = document.getElementById("tabela");
   tabela.innerHTML = "";
+
+  if (alunos.length === 0) {
+    tabela.innerHTML = `<tr><td colspan="6">Nenhum aluno cadastrado.</td></tr>`;
+    return;
+  }
 
   alunos.forEach(a => {
     tabela.innerHTML += `
@@ -80,20 +95,22 @@ function emailValido(email) {
 
 // SALVAR
 async function salvar() {
-  const nome = document.getElementById("nome").value;
-  const email = document.getElementById("email").value;
+  const nome = document.getElementById("nome").value.trim();
+  const email = document.getElementById("email").value.trim();
   const data = document.getElementById("data").value;
   const turma = document.getElementById("turma").value;
 
   if (!nome || !email || !data || !turma) {
-    mostrarToast("Preencha todos os campos!");
+    mostrarToast("Preencha todos os campos.", "#ef4444");
     return;
   }
 
   if (!emailValido(email)) {
-    mostrarToast("Email inválido!");
+    mostrarToast("E-mail inválido.", "#ef4444");
     return;
   }
+
+  const RA = gerarRA();
 
   await fetch(API, {
     method: "POST",
@@ -102,53 +119,29 @@ async function salvar() {
       nome,
       email,
       dataNascimento: data,
-      turma
+      turma,
+      RA
     })
   });
 
-  mostrarToast("Aluno cadastrado!");
+  mostrarToast("Aluno cadastrado com sucesso.", "#16a34a");
+
   fecharModal();
   listar();
 }
 
 // DELETAR
 async function deletar(ra) {
+  const confirmar = confirm("Deseja realmente excluir este aluno?");
+
+  if (!confirmar) return;
+
   await fetch(API + "/" + ra, { method: "DELETE" });
-  mostrarToast("Aluno removido!");
+
+  mostrarToast("Aluno removido com sucesso.", "#ef4444");
+
   listar();
 }
 
 // INIT
-listar();*/
-.animate {
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* TOAST */
-#toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #2563eb;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  opacity: 0;
-  transition: 0.3s;
-}
+listar();
